@@ -33,7 +33,8 @@ namespace gif_creator
   class gif_creator
   {
   public:
-    inline gif_creator(const std::string & p_file_name);
+    inline gif_creator(const std::string & p_file_name,
+		       const unsigned int & p_delay_ms);
     inline ~gif_creator(void);
   private:
     static inline const unsigned int & convert_to_gif_color(const lib_bmp::my_color_alpha & p_bmp_color,
@@ -45,7 +46,8 @@ namespace gif_creator
 
 
   //----------------------------------------------------------------------------
-  gif_creator::gif_creator(const std::string & p_file_name)
+  gif_creator::gif_creator(const std::string & p_file_name,
+			   const unsigned int & p_delay_ms)
   {
     size_t l_pattern_pos = p_file_name.find("#");
     if(std::string::npos == l_pattern_pos) throw quicky_exception::quicky_logic_exception("Failed to find '#' character in file patter \"" + p_file_name + "\"",__LINE__,__FILE__);
@@ -161,7 +163,7 @@ namespace gif_creator
 	    l_gif_image->set_color_index(l_x,l_y,convert_to_gif_color(l_bmp->get_pixel_color(l_x,l_y),l_conversion_colors));
 	  }
       }
-    l_gif.add_graphic_control_extension(100,false);
+    l_gif.add_graphic_control_extension(p_delay_ms,false);
     l_gif.add_image(*l_gif_image);
 
     lib_bmp::my_bmp * l_previous_bmp_file = l_bmp;
@@ -221,7 +223,7 @@ namespace gif_creator
 	assert(l_transparent_index < 256);
 	std::cout << "Transparent index : " << l_transparent_index << "\tDiff window (" << l_min_x_diff << "," << l_min_y_diff << ")-(" << l_max_x_diff << "," << l_max_y_diff << ")" << std::endl ;
 
-	l_gif.add_graphic_control_extension(100,true,l_transparent_index);
+	l_gif.add_graphic_control_extension(p_delay_ms,true,l_transparent_index);
 
 	unsigned int l_diff_width = l_max_x_diff - l_min_x_diff + 1;
 	unsigned int l_diff_heigth = l_max_y_diff - l_min_y_diff + 1;

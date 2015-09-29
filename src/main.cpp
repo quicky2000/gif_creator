@@ -27,15 +27,17 @@ int main(int argc,char ** argv)
     {
       // Defining application command line parameters
       parameter_manager::parameter_manager l_param_manager("gif_creator.exe","--",1);
-      parameter_manager::parameter_if l_file_name_parameter("file_name",false);
+      parameter_manager::parameter_if l_file_name_parameter("file-name",false);
       l_param_manager.add(l_file_name_parameter);
+      parameter_manager::parameter_if l_delay_ms_parameter("delay-ms",true);
+      l_param_manager.add(l_delay_ms_parameter);
   
       // Treating parameters
       l_param_manager.treat_parameters(argc,argv);
 
       std::string l_file_name = l_file_name_parameter.get_value<std::string>();
-
-      gif_creator::gif_creator l_gif_creator(l_file_name);
+      unsigned int l_delay = l_delay_ms_parameter.value_set() ? atoi(l_delay_ms_parameter.get_value<std::string>().c_str()) : 500;
+  gif_creator::gif_creator l_gif_creator(l_file_name,l_delay);
     }
   catch(quicky_exception::quicky_runtime_exception & e)
     {
