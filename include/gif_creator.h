@@ -38,7 +38,9 @@ namespace gif_creator
 		       const unsigned int & p_x_origin,
 		       const unsigned int & p_y_origin,
 		       const unsigned int & p_width,
-		       const unsigned int & p_height);
+		       const unsigned int & p_height,
+		       const unsigned int & p_start_index,
+		       const unsigned int & p_nb_files);
     inline ~gif_creator(void);
   private:
     static inline const unsigned int & convert_to_gif_color(const lib_bmp::my_color_alpha & p_bmp_color,
@@ -55,7 +57,9 @@ namespace gif_creator
 			   const unsigned int & p_x_origin,
 			   const unsigned int & p_y_origin,
 			   const unsigned int & p_width,
-			   const unsigned int & p_height)
+			   const unsigned int & p_height,
+			   const unsigned int & p_start_index,
+			   const unsigned int & p_nb_files)
   {
     size_t l_pattern_pos = p_file_name.find("#");
     if(std::string::npos == l_pattern_pos) throw quicky_exception::quicky_logic_exception("Failed to find '#' character in file patter \"" + p_file_name + "\"",__LINE__,__FILE__);
@@ -63,7 +67,7 @@ namespace gif_creator
     // Search files matching pattern
     std::vector<std::string> l_file_list;
     bool l_continu = true;
-    unsigned int l_file_index = 0;
+    unsigned int l_file_index = p_start_index;
     do
       {
 	std::string l_file_name = p_file_name;
@@ -82,6 +86,10 @@ namespace gif_creator
 	    ++l_file_index;
 	  }
 	else
+	  {
+	    l_continu = false;
+	  }
+	if(p_nb_files == l_file_list.size())
 	  {
 	    l_continu = false;
 	  }

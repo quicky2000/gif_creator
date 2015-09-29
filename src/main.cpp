@@ -38,6 +38,10 @@ int main(int argc,char ** argv)
       l_param_manager.add(l_width_parameter);
       parameter_manager::parameter_if l_height_parameter("height",true);
       l_param_manager.add(l_height_parameter);
+      parameter_manager::parameter_if l_start_index_parameter("start-index",true);
+      l_param_manager.add(l_start_index_parameter);
+      parameter_manager::parameter_if l_nb_files_parameter("nb-files",true);
+      l_param_manager.add(l_nb_files_parameter);
   
       // Treating parameters
       l_param_manager.treat_parameters(argc,argv);
@@ -46,9 +50,11 @@ int main(int argc,char ** argv)
       unsigned int l_delay = l_delay_ms_parameter.value_set() ? atoi(l_delay_ms_parameter.get_value<std::string>().c_str()) : 500;
       unsigned int l_x_origin = l_x_origin_parameter.value_set() ? atoi(l_x_origin_parameter.get_value<std::string>().c_str()) : 0;
       unsigned int l_y_origin = l_y_origin_parameter.value_set() ? atoi(l_y_origin_parameter.get_value<std::string>().c_str()) : 0;
-      unsigned int l_height = l_height_parameter.value_set() ? atoi(l_height_parameter.get_value<std::string>().c_str()) : 0;
       unsigned int l_width = l_width_parameter.value_set() ? atoi(l_width_parameter.get_value<std::string>().c_str()) : 0;
-      gif_creator::gif_creator l_gif_creator(l_file_name,l_delay,l_x_origin,l_y_origin,l_width,l_height);
+      unsigned int l_height = l_height_parameter.value_set() ? atoi(l_height_parameter.get_value<std::string>().c_str()) : 0;
+      unsigned int l_start_index = l_start_index_parameter.value_set() ? atoi(l_start_index_parameter.get_value<std::string>().c_str()) : 0;
+      unsigned int l_nb_files = l_nb_files_parameter.value_set() ? atoi(l_nb_files_parameter.get_value<std::string>().c_str()) : 0;
+      gif_creator::gif_creator l_gif_creator(l_file_name,l_delay,l_x_origin,l_y_origin,l_width,l_height,l_start_index,l_nb_files);
     }
   catch(quicky_exception::quicky_runtime_exception & e)
     {
