@@ -34,7 +34,11 @@ namespace gif_creator
   {
   public:
     inline gif_creator(const std::string & p_file_name,
-		       const unsigned int & p_delay_ms);
+		       const unsigned int & p_delay_ms,
+		       const unsigned int & p_x_origin,
+		       const unsigned int & p_y_origin,
+		       const unsigned int & p_width,
+		       const unsigned int & p_height);
     inline ~gif_creator(void);
   private:
     static inline const unsigned int & convert_to_gif_color(const lib_bmp::my_color_alpha & p_bmp_color,
@@ -47,7 +51,11 @@ namespace gif_creator
 
   //----------------------------------------------------------------------------
   gif_creator::gif_creator(const std::string & p_file_name,
-			   const unsigned int & p_delay_ms)
+			   const unsigned int & p_delay_ms,
+			   const unsigned int & p_x_origin,
+			   const unsigned int & p_y_origin,
+			   const unsigned int & p_width,
+			   const unsigned int & p_height)
   {
     size_t l_pattern_pos = p_file_name.find("#");
     if(std::string::npos == l_pattern_pos) throw quicky_exception::quicky_logic_exception("Failed to find '#' character in file patter \"" + p_file_name + "\"",__LINE__,__FILE__);
@@ -87,8 +95,8 @@ namespace gif_creator
 
     // Iterator on files to insure they have coherent dimensions, palette size and store them in memory
     std::set<lib_bmp::my_color_alpha> l_unified_bmp_palette;
-    unsigned int l_width = 0;
-    unsigned int l_height = 0;
+    unsigned int l_file_width = 0;
+    unsigned int l_file_height = 0;
     for(auto l_file_iter : l_file_list)
       {
 	std::cout << "Load file \"" << l_file_iter << "\"" << std::endl ;
@@ -97,17 +105,25 @@ namespace gif_creator
 	m_bmp_files.push_back(std::pair<std::string,lib_bmp::my_bmp *>(l_file_iter,l_bmp));
 
 	// Store Picuture dimensions
-	if(!l_width && ! l_height)
+	if(!l_file_width && ! l_file_height)
 	  {
-	    l_width = l_bmp->get_width();
-	    l_height = l_bmp->get_height();
+	    l_file_width = l_bmp->get_width();
+	    l_file_height = l_bmp->get_height();
+	    if(p_x_origin + p_width > l_file_width)
+	      {
+		throw quicky_exception::quicky_logic_exception("Width indicated in parameter with Origin x is greater than file width",__LINE__,__FILE__);
+	      }
+	    if(p_y_origin + p_height > l_file_height)
+	      {
+		throw quicky_exception::quicky_logic_exception("Width indicated in parameter with Origin x is greater than file width",__LINE__,__FILE__);
+	      }
 	  }
-	else if(l_width != l_bmp->get_width() || l_height != l_bmp->get_height())
+	else if(l_file_width != l_bmp->get_width() || l_file_height != l_bmp->get_height())
 	  {
 	    std::stringstream l_reference_width;
-	    l_reference_width << l_width;
+	    l_reference_width << l_file_width;
 	    std::stringstream l_reference_height;
-	    l_reference_height << l_height;
+	    l_reference_height << l_file_height;
 	    std::stringstream l_new_width ;
 	    l_new_width << l_bmp->get_width();
 	    std::stringstream l_new_height ;
@@ -138,7 +154,11 @@ namespace gif_creator
 	throw quicky_exception::quicky_logic_exception("Unified palette size is greater than 256 : " + l_size_stream.str(),__LINE__,__FILE__);
       }
 
-    lib_gif::gif l_gif(l_width,l_height);
+    unsigned int l_output_width = p_width ? p_width : l_file_width;
+    unsigned int l_output_height = p_height ? p_height : l_file_height;
+    unsigned int l_max_x = p_x_origin + l_output_width;
+    unsigned int l_max_y = p_y_origin + l_output_height;
+    lib_gif::gif l_gif(l_output_width,l_output_height);
 
     // Copy BMP file palette to GIF palette
     unsigned int l_index = 0;
@@ -155,12 +175,12 @@ namespace gif_creator
 
     // Directly Convert first BMP file into a GIF picture
     lib_bmp::my_bmp *l_bmp = m_bmp_files.front().second;
-    lib_gif::gif_image * l_gif_image = new lib_gif::gif_image(l_width,l_height);
-    for(unsigned int l_y = 0 ; l_y < l_height ; ++l_y)
+    lib_gif::gif_image * l_gif_image = new lib_gif::gif_image(l_output_width,l_output_height);
+    for(unsigned int l_y = p_y_origin ; l_y < l_max_y ; ++l_y)
       {
-	for(unsigned int l_x = 0 ; l_x < l_width ; ++l_x)
+	for(unsigned int l_x = p_x_origin ; l_x < l_max_x ; ++l_x)
 	  {
-	    l_gif_image->set_color_index(l_x,l_y,convert_to_gif_color(l_bmp->get_pixel_color(l_x,l_y),l_conversion_colors));
+	    l_gif_image->set_color_index(l_x - p_x_origin,l_y - p_y_origin,convert_to_gif_color(l_bmp->get_pixel_color(l_x,l_y),l_conversion_colors));
 	  }
       }
     l_gif.add_graphic_control_extension(p_delay_ms,false);
@@ -177,13 +197,13 @@ namespace gif_creator
 	// Compute differences with previous picture
 	std::set<unsigned int> l_color_difference_index;
 	std::map<std::pair<unsigned int,unsigned int>, unsigned int> m_differences;
-	unsigned int l_min_x_diff = l_width;
+	unsigned int l_min_x_diff = l_file_width;
 	unsigned int l_max_x_diff = 0;
-	unsigned int l_min_y_diff = l_height;
+	unsigned int l_min_y_diff = l_file_height;
 	unsigned int l_max_y_diff = 0;
-	for(unsigned int l_y = 0 ; l_y < l_height ; ++l_y)
+	for(unsigned int l_y = p_y_origin ; l_y < l_max_y ; ++l_y)
 	  {
-	    for(unsigned int l_x = 0 ; l_x < l_width ; ++l_x)
+	    for(unsigned int l_x = p_x_origin ; l_x < l_max_x ; ++l_x)
 	      {
 		const lib_bmp::my_color_alpha & l_bmp_color = l_bmp->get_pixel_color(l_x,l_y);
 		const lib_bmp::my_color_alpha & l_previous_bmp_color = l_previous_bmp_file->get_pixel_color(l_x,l_y);
@@ -226,11 +246,11 @@ namespace gif_creator
 	l_gif.add_graphic_control_extension(p_delay_ms,true,l_transparent_index);
 
 	unsigned int l_diff_width = l_max_x_diff - l_min_x_diff + 1;
-	unsigned int l_diff_heigth = l_max_y_diff - l_min_y_diff + 1;
-	l_gif_image = new lib_gif::gif_image(l_diff_width,l_diff_heigth,l_min_x_diff,l_min_y_diff);
+	unsigned int l_diff_height = l_max_y_diff - l_min_y_diff + 1;
+	l_gif_image = new lib_gif::gif_image(l_diff_width,l_diff_height,l_min_x_diff - p_x_origin,l_min_y_diff - p_y_origin);
 
 	// Generate differential picture
-	for(unsigned int l_y = 0 ; l_y < l_diff_heigth ; ++l_y)
+	for(unsigned int l_y = 0 ; l_y < l_diff_height ; ++l_y)
 	  {
 	    for(unsigned int l_x = 0 ; l_x < l_diff_width ; ++l_x)
 	      {
