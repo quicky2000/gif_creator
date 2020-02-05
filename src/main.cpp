@@ -19,53 +19,54 @@
 #include "gif_creator.h"
 
 
-int main(int argc,char ** argv)
+int main( int p_argc
+        , char ** p_argv
+        )
 {
-
-  try
+    try
     {
-      // Defining application command line parameters
-      parameter_manager::parameter_manager l_param_manager("gif_creator.exe","--",1);
-      parameter_manager::parameter_if l_file_name_parameter("file-name",false);
-      l_param_manager.add(l_file_name_parameter);
-      parameter_manager::parameter_if l_delay_ms_parameter("delay-ms",true);
-      l_param_manager.add(l_delay_ms_parameter);
-      parameter_manager::parameter_if l_x_origin_parameter("x-origin",true);
-      l_param_manager.add(l_x_origin_parameter);
-      parameter_manager::parameter_if l_y_origin_parameter("y-origin",true);
-      l_param_manager.add(l_y_origin_parameter);
-      parameter_manager::parameter_if l_width_parameter("width",true);
-      l_param_manager.add(l_width_parameter);
-      parameter_manager::parameter_if l_height_parameter("height",true);
-      l_param_manager.add(l_height_parameter);
-      parameter_manager::parameter_if l_start_index_parameter("start-index",true);
-      l_param_manager.add(l_start_index_parameter);
-      parameter_manager::parameter_if l_nb_files_parameter("nb-files",true);
-      l_param_manager.add(l_nb_files_parameter);
+        // Defining application command line parameters
+        parameter_manager::parameter_manager l_param_manager("gif_creator.exe","--",1);
+        parameter_manager::parameter_if l_file_name_parameter("file-name",false);
+        l_param_manager.add(l_file_name_parameter);
+        parameter_manager::parameter_if l_delay_ms_parameter("delay-ms",true);
+        l_param_manager.add(l_delay_ms_parameter);
+        parameter_manager::parameter_if l_x_origin_parameter("x-origin",true);
+        l_param_manager.add(l_x_origin_parameter);
+        parameter_manager::parameter_if l_y_origin_parameter("y-origin",true);
+        l_param_manager.add(l_y_origin_parameter);
+        parameter_manager::parameter_if l_width_parameter("width",true);
+        l_param_manager.add(l_width_parameter);
+        parameter_manager::parameter_if l_height_parameter("height",true);
+        l_param_manager.add(l_height_parameter);
+        parameter_manager::parameter_if l_start_index_parameter("start-index",true);
+        l_param_manager.add(l_start_index_parameter);
+        parameter_manager::parameter_if l_nb_files_parameter("nb-files",true);
+        l_param_manager.add(l_nb_files_parameter);
   
-      // Treating parameters
-      l_param_manager.treat_parameters(argc,argv);
+        // Treating parameters
+        l_param_manager.treat_parameters(p_argc, p_argv);
 
-      std::string l_file_name = l_file_name_parameter.get_value<std::string>();
-      unsigned int l_delay = l_delay_ms_parameter.value_set() ? atoi(l_delay_ms_parameter.get_value<std::string>().c_str()) : 500;
-      unsigned int l_x_origin = l_x_origin_parameter.value_set() ? atoi(l_x_origin_parameter.get_value<std::string>().c_str()) : 0;
-      unsigned int l_y_origin = l_y_origin_parameter.value_set() ? atoi(l_y_origin_parameter.get_value<std::string>().c_str()) : 0;
-      unsigned int l_width = l_width_parameter.value_set() ? atoi(l_width_parameter.get_value<std::string>().c_str()) : 0;
-      unsigned int l_height = l_height_parameter.value_set() ? atoi(l_height_parameter.get_value<std::string>().c_str()) : 0;
-      unsigned int l_start_index = l_start_index_parameter.value_set() ? atoi(l_start_index_parameter.get_value<std::string>().c_str()) : 0;
-      unsigned int l_nb_files = l_nb_files_parameter.value_set() ? atoi(l_nb_files_parameter.get_value<std::string>().c_str()) : 0;
-      gif_creator::gif_creator l_gif_creator(l_file_name,l_delay,l_x_origin,l_y_origin,l_width,l_height,l_start_index,l_nb_files);
+        std::string l_file_name = l_file_name_parameter.get_value<std::string>();
+        unsigned int l_delay = l_delay_ms_parameter.value_set() ? atoi(l_delay_ms_parameter.get_value<std::string>().c_str()) : 500;
+        unsigned int l_x_origin = l_x_origin_parameter.value_set() ? atoi(l_x_origin_parameter.get_value<std::string>().c_str()) : 0;
+        unsigned int l_y_origin = l_y_origin_parameter.value_set() ? atoi(l_y_origin_parameter.get_value<std::string>().c_str()) : 0;
+        unsigned int l_width = l_width_parameter.value_set() ? atoi(l_width_parameter.get_value<std::string>().c_str()) : 0;
+        unsigned int l_height = l_height_parameter.value_set() ? atoi(l_height_parameter.get_value<std::string>().c_str()) : 0;
+        unsigned int l_start_index = l_start_index_parameter.value_set() ? atoi(l_start_index_parameter.get_value<std::string>().c_str()) : 0;
+        unsigned int l_nb_files = l_nb_files_parameter.value_set() ? atoi(l_nb_files_parameter.get_value<std::string>().c_str()) : 0;
+        gif_creator::gif_creator l_gif_creator(l_file_name,l_delay,l_x_origin,l_y_origin,l_width,l_height,l_start_index,l_nb_files);
     }
-  catch(quicky_exception::quicky_runtime_exception & e)
+    catch(quicky_exception::quicky_runtime_exception & e)
     {
-      std::cout << "ERROR : " << e.what() << std::endl ;
-      return(-1);
+        std::cout << "ERROR : " << e.what() << std::endl ;
+        return(-1);
     }
-  catch(quicky_exception::quicky_logic_exception & e)
+    catch(quicky_exception::quicky_logic_exception & e)
     {
-      std::cout << "ERROR : " << e.what() << std::endl ;
-      return(-1);
+        std::cout << "ERROR : " << e.what() << std::endl ;
+        return(-1);
     }
-  return 0;
+    return 0;
 }
 //EOF
