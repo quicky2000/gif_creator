@@ -3,7 +3,7 @@ Gif_creator
 
 Software to create some animated GIFs from a list of BMP files
 
-Continuous integration with [Travis-Ci](https://travis-ci.org/quicky2000/gif_creator) : ![Build Status](https://travis-ci.org/quicky2000/gif_creator.svg?branch=master)
+Continuous integration with [Travis-Ci](https://app.travis-ci.com/github/quicky2000/gif_creator) : ![Build Status](https://travis-ci.org/quicky2000/gif_creator.svg?branch=master)
 
 License
 -------
@@ -13,7 +13,7 @@ Build
 -----
 
 Build process is the same used in [Travis file](.travis.yml)
-Reference build can be found [here](https://travis-ci.org/quicky2000/gif_creator)
+Reference build can be found [here](https://app.travis-ci.com/github/quicky2000/gif_creator)
 
 ```
 MY_LOCATION=`pwd`
