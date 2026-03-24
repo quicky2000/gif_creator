@@ -4,7 +4,6 @@ matrix:
       sudo: required
       dist: bionic
       compiler: gcc
-    - os: osx
 
 language: cpp
 
@@ -31,7 +30,9 @@ before_install:
   - cd build
 
 script:
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then generate_makefile gif_creator ; make ; mkdir cmake_build ; cd cmake_build ; fi
+  - generate_makefile gif_creator
+  - make
+  - mkdir cmake_build ; cd cmake_build
   - cmake $QUICKY_REPOSITORY/gif_creator
   - make
 #EOF
